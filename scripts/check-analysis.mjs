@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {analyze,normalizeRows} from '../lib/analysis.ts';
+const data=JSON.parse(fs.readFileSync('data/initial.json','utf8'));
+const a=analyze(data);
+assert.equal(a.total,76335609);assert.equal(a.rows.length,145);assert.equal(a.aCount,32);
+assert.equal(a.rows[0].name,'和司特');assert.equal(a.rows.at(-1).cumulative,1);
+assert.deepEqual(normalizeRows([{name:'甲',amount:10},{name:'甲',amount:20}]),[{name:'甲',amount:30}]);
+assert.throws(()=>normalizeRows([{name:'甲',amount:-10}]));
+assert.throws(()=>normalizeRows([{name:'甲',amount:NaN}]));
+const changed=analyze([{name:'甲',amount:5},{name:'乙',amount:15}]);assert.equal(changed.rows[0].name,'乙');assert.equal(changed.rows[0].share,.75);
+console.log('分析檢查通過：總額、145家、排名、ABC、重複名稱及錯誤金額。');
